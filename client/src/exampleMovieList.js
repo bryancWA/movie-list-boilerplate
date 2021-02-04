@@ -1,4 +1,4 @@
-var movies = [
+const movies = [
   {title: 'Mean Girls'},
   {title: 'Hackers'},
   {title: 'The Grey'},

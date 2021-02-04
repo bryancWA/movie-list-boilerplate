@@ -1,6 +1,7 @@
-import MovieEntry from '.IndividualMovieEntry.js';
+import React from 'react';
+import MovieEntry from './IndividualMovieEntry.jsx';
 
-var TotalMovieList = (props) => (
+const TotalMovieList = (props) => (
   <div>
    {props.movies.map((movie, index) => (
      <div key={index}>
