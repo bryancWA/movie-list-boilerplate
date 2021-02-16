@@ -5,4 +5,4 @@ import movies from './exampleMovieList.js';
 
 
 
-ReactDOM.render(<App movieList={movies}/>, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));

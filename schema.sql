@@ -1,0 +1,9 @@
+CREATE DATABASE movies;
+
+USE movies;
+
+CREATE TABLE movielist (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255),
+  watched TINYINT
+);
