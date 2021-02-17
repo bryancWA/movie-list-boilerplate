@@ -7,6 +7,7 @@ import axios from 'axios';
 import ToWatch from './ToWatch.jsx';
 import Watched from './Watched.jsx';
 import API_KEY from './apistuff.js';
+import qs from 'qs';
 
 class App extends React.Component {
   constructor(props) {
@@ -14,8 +15,8 @@ class App extends React.Component {
     this.state = {
       movies: [],
       searchTerm: 'searchTerm not changed',
-      // watched: [],
-      // toWatch: []
+      currentTargetMovieId: ''
+
     }
     this.formSubmission = this.formSubmission.bind(this);
     this.editSearchTerm = this.editSearchTerm.bind(this);
@@ -26,6 +27,7 @@ class App extends React.Component {
     this.handleWatchedRender = this.handleWatchedRender.bind(this);
     this.handleToWatchRender = this.handleToWatchRender.bind(this);
     this.handleMovieInfo = this.handleMovieInfo.bind(this);
+    this.renderMovieInfo = this.renderMovieInfo.bind(this);
 
   }
   editSearchTerm(e) {
@@ -106,18 +108,42 @@ class App extends React.Component {
 
   }
 
+  renderMovieInfo(data, id) {
+    const movieInfo = `
+      Run Time: ${data.runtime} min
+      Release Date: ${data.release_date}
+      Tag Line: ${data.tagline} `
+
+    ReactDOM.render(movieInfo, document.getElementById(`${id}`));
+  }
+
+  renderMovieInfoError(id) {
+    const errorMessage = `Movie Not Found`;
+    ReactDOM.render(errorMessage, document.getElementById(`${id}`));
+  }
+
   handleMovieInfo(event) {
     event.preventDefault();
     console.log('click event registered handle movie Info');
-    axios.get('https://api.themoviedb.org/3/movie/671?api_key=' + API_KEY)
-      // url: 'https://api.themoviedb.org/3/movie/671?api_key=' + API_KEY,
-      // movie_id: 671,
-      // title: event.target.value
-    // })
+    event.persist();
+    if (this.state.currentTargetMovieId) {
+      ReactDOM.unmountComponentAtNode(document.getElementById(`${this.state.currentTargetMovieId}`))
+    }
+    this.setState({ currentTargetMovieId: event.target.value })
+    axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${event.target.value}`)
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
+        axios.get(`https://api.themoviedb.org/3/movie/${response.data.results[0].id}?api_key=${API_KEY}`)
+        .then((response) => {
+            console.log('second get request success', response);
+            this.renderMovieInfo(response.data, event.target.value);
+
+          })
       })
-      .catch((err) => { console.log('moviedb get error ', err) })
+      .catch((err) => {
+        console.log('moviedb get error ', err);
+        this.renderMovieInfoError(event.target.value);
+      })
   }
 
   //create a getInput method that retrieves input from inputBar state and pass as props
